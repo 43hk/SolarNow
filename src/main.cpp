@@ -23,7 +23,7 @@ Vec3f camera(0,0,5);
 
 //视线方向
 Vec3f view(0, 0, -1);
-float light_strength = 0.7;
+//float light_strength = 0.7;
 //计算半程向量
 Vec3f half = (light_dir + view).normalize();
 //创建环境光强

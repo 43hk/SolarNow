@@ -817,8 +817,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "E:/CG/004rendering/project/cmake-build-debug",
-		"source" : "E:/CG/004rendering/project"
+		"build" : "E:/SolarNow/cmake-build-debug",
+		"source" : "E:/SolarNow"
 	},
 	"version" : 
 	{

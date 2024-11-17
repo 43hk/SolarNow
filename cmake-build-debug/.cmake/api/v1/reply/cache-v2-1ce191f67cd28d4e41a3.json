@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "e:/CG/004rendering/project/cmake-build-debug"
+			"value" : "e:/SolarNow/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -575,7 +575,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "E:/CG/004rendering/project/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "E:/SolarNow/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -647,7 +647,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "E:/CG/004rendering/project"
+			"value" : "E:/SolarNow"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1291,7 +1291,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "E:/CG/004rendering/project/cmake-build-debug"
+			"value" : "E:/SolarNow/cmake-build-debug"
 		},
 		{
 			"name" : "render_IS_TOP_LEVEL",
@@ -1315,7 +1315,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "E:/CG/004rendering/project"
+			"value" : "E:/SolarNow"
 		}
 	],
 	"kind" : "cache",

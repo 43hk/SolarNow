@@ -1,4 +1,4 @@
-# Install script for directory: E:/CG/004rendering/project
+# Install script for directory: E:/SolarNow
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "E:/CG/004rendering/project/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/SolarNow/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
