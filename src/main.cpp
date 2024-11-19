@@ -50,7 +50,7 @@ Vec2i operator/(Vec2i a, float b)
 	return {static_cast<int>(a.x*b), static_cast<int>(a.y*b)};
 }
 
-void triangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, float &ity0, float &ity1, float &ity2,
+void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2, float &ity0, float &ity1, float &ity2,
               Vec2i &uv0, Vec2i &uv1, Vec2i &uv2, TGAImage &image, int *zbuffer)
 {
     if (t0.y == t1.y && t0.y == t2.y) return;  // 退化三角形忽略
@@ -93,7 +93,7 @@ void triangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, float &ity0, float &ity1, float &
             {
                 zbuffer[idx] = P.z;
                 TGAColor color = model->diffuse(uvP);  // 获取纹理颜色
-                image.set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : ambient_light));
+                image.set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : 0));
             }
         }
     }
@@ -101,8 +101,9 @@ void triangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, float &ity0, float &ity1, float &
 
 
 int main(int argc, char **argv) {
-	model = new Model("E:/CG/004rendering/project/model/african_head.obj");
+	model = new Model("model/earth_day.obj");
 	TGAImage image(width, height, TGAImage::RGB);
+
 
 	//初始化z_buffer
 	zbuffer = new int[width*height];
@@ -121,34 +122,28 @@ int main(int argc, char **argv) {
 
 	for (int i = 0; i < model->nfaces(); i++)
 	{
-		std::vector<int> face = model->face(i);
+		auto triangles = model->triangulate_face(i); // 将面拆分为多个三角形
 
-		Vec3i screen_coords[3]; //屏幕坐标,带上近似后的z轴坐标
-		Vec3f world_coords[3]; //世界坐标
-
-
-		float intensity[3][3];//规定第一个存储漫反射，第二个存储高光
-		Vec2i uv[3];//三个顶点的UV坐标
-		for (int j=0; j<3; j++)
+		for (auto &triangle : triangles)
 		{
-			Vec3f v = model->vert(face[j]);
-			screen_coords[j] = Vec3f(ViewPort*Projection*Matrix(v));//矩阵变换从三维空间投射到屏幕空间
+			Vec3i screen_coords[3];
+			Vec2i uv[3];
+			float intensity[3];
 
-			intensity[j][0] = std::max(model->norm(i, j) * light_dir, 0.0f);
-			intensity[j][1] = std::max(model->norm(i, j) * half, 0.0f);
-			intensity[j][2] = intensity[j][0] + intensity[j][1];
+			for (int j = 0; j < 3; j++)
+			{
+				Vec3i idx = triangle[j];
+				screen_coords[j] = Vec3f(ViewPort * Projection * Matrix(model->vert(idx[0])));
+				uv[j] = model->uv(idx[1]);
+				intensity[j] = std::max(model->norm(idx[2]) * light_dir, 0.f);
+			}
 
-			uv[j] = model->uv(i, j); // 假设model->uv()返回的是Vec2i类型
-
+			triangleDraw(screen_coords[0], screen_coords[1], screen_coords[2],
+					 intensity[0], intensity[1], intensity[2],
+					 uv[0], uv[1], uv[2],
+					 image, zbuffer);
 		}
-
-
-		triangle(screen_coords[0], screen_coords[1], screen_coords[2],
-			intensity[0][2], intensity[1][2], intensity[2][2],
-			uv[0], uv[1], uv[2],
-			image, zbuffer);
 	}
-
 
 	//计时结束
 	const auto end = std::chrono::high_resolution_clock::now();

@@ -29,24 +29,15 @@ Model::Model(const char *filename) : verts_(), faces_(), norms_(), uv_(), diffus
             Vec2f uv;
             for (int i=0;i<2;i++) iss >> uv[i];
             uv_.push_back(uv);
-        } else if (!line.compare(0, 2, "f ")) {
+        }  else if (!line.compare(0, 2, "f ")) {
             std::vector<Vec3i> f;
             Vec3i tmp;
             iss >> trash;
-            // 动态解析每个顶点
-            while (iss >> tmp[0]) {
-                tmp[1] = tmp[2] = 0; // 默认值
-                if (iss.peek() == '/') {
-                    iss >> trash;
-                    if (iss.peek() != '/') iss >> tmp[1]; // 纹理索引
-                    if (iss.peek() == '/') {
-                        iss >> trash >> tmp[2]; // 法线索引
-                    }
-                }
-                for (int i = 0; i < 3; i++) tmp[i]--; // OBJ 索引从 1 开始，数组是从0开始
+            while (iss >> tmp[0] >> trash >> tmp[1] >> trash >> tmp[2]) {
+                for (int i=0; i<3; i++) tmp[i]--; // in wavefront obj all indices start at 1, not zero
                 f.push_back(tmp);
             }
-            faces_.push_back(f); // 存储面
+            faces_.push_back(f);
         }
     }
     std::cerr << "# v# " << verts_.size() << " f# "  << faces_.size() << " vt# " << uv_.size() << " vn# " << norms_.size() << std::endl;
@@ -66,9 +57,7 @@ int Model::nfaces() {
 
 std::vector<int> Model::face(int idx) {
     std::vector<int> face;
-    for (Vec3i v : faces_[idx]) {
-        face.push_back(v[0]); // 只提取顶点索引
-    }
+    for (int i=0; i<(int)faces_[idx].size(); i++) face.push_back(faces_[idx][i][0]);
     return face;
 }
 
@@ -90,31 +79,14 @@ TGAColor Model::diffuse(Vec2i uv) {
     return diffusemap_.get(uv.x , uv.y);
 }
 
-Vec2i Model::uv(int idx) {
+Vec2i Model::uv(int iface, int nvert) {
+    int idx = faces_[iface][nvert][1];
     return Vec2i(uv_[idx].x * diffusemap_.get_width(), uv_[idx].y * diffusemap_.get_height());
 }
 
-Vec3f Model::norm(int idx) {
+Vec3f Model::norm(int iface, int nvert) {
+    int idx = faces_[iface][nvert][2];
     return norms_[idx].normalize();
 }
-
-std::vector<std::vector<Vec3i>> Model::triangulate_face(int idx) {
-    std::vector<Vec3i> &face = faces_[idx];
-    std::vector<std::vector<Vec3i>> triangles;
-
-    if (face.size() == 4)
-    {
-        triangles.push_back({face[0], face[1], face[2]});
-        triangles.push_back({face[0], face[2], face[3]});
-    }
-    if (face.size() == 3)
-    {
-        triangles.push_back({face[0], face[1], face[2]});
-    }
-
-    return triangles;
-}
-
-
 
 
