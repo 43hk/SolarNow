@@ -5,4 +5,5 @@
 
 #### 贡献
 1.TinyRender开源教程https://github.com/ssloy/tinyrenderer
+
 2.纹理贴图来源https://www.solarsystemscope.com/textures/
