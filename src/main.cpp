@@ -9,8 +9,8 @@
 #include "model.h"
 #include "geometry.h"
 
-constexpr int width = 1600;
-constexpr int height = 1600;
+constexpr int width = 2000;
+constexpr int height = 2000;
 constexpr int depth = 255 ;
 
 const auto white = TGAColor(255, 255, 255, 255);
@@ -27,7 +27,7 @@ Vec3f view(0, 0, -1);
 //计算半程向量
 Vec3f half = (light_dir + view).normalize();
 //创建环境光强
-constexpr float ambient_light = 0.2;
+constexpr float ambient_light = 0.1;
 
 Model *model = nullptr;
 int *zbuffer = nullptr;
@@ -93,7 +93,7 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2, float &ity0, float &ity1, flo
             {
                 zbuffer[idx] = P.z;
                 TGAColor color = model->diffuse(uvP);  // 获取纹理颜色
-                image.set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : 0));
+                image.set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : ambient_light));
             }
         }
     }
