@@ -5,9 +5,7 @@
 #include <cmath>
 #include <limits>
 
-#include "tgaimage.h"
-#include "model.h"
-#include "geometry.h"
+#include "SolarGL.h"
 
 constexpr int width = 2000;
 constexpr int height = 2000;
@@ -156,10 +154,6 @@ int main(int argc, char **argv) {
 	image.write_tga_file("output.tga");
 	delete model;
 	delete []zbuffer;
-
-	//用ffmpeg库写一个convert批处理，在导出TGA图片后自转换为PNG方便查看
-	std::string batFilePath = "convert.bat";
-	system(batFilePath.c_str());
 
 	return 0;
 }

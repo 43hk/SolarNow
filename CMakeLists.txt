@@ -4,9 +4,12 @@
  # 指定项目名称 
  project(SolarNow)
 
- include_directories(
-         SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/include
- )
+ #库目录
+ link_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+ #头文件
+ include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
  # 添加源代码文件
- add_executable(main "src/tgaimage.cpp" "src/model.cpp" "src/geometry.cpp" "src/main.cpp")
+ add_executable(main src/main.cpp)
+
+ target_link_libraries(main SolarGL)
