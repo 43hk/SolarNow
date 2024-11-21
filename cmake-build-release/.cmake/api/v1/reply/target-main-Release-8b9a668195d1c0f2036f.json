@@ -42,7 +42,7 @@
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 15,
+				"line" : 19,
 				"parent" : 0
 			},
 			{
@@ -65,6 +65,14 @@
 			"includes" : 
 			[
 				{
+					"backtrace" : 3,
+					"path" : "E:/SolarNow/application"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "E:/SolarNow/SolarGL"
+				},
+				{
 					"backtrace" : 4,
 					"isSystem" : true,
 					"path" : "E:/SolarNow/include"
@@ -75,6 +83,46 @@
 			[
 				0
 			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /O2 /Ob2 /DNDEBUG -MD"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "E:/SolarNow/application"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "E:/SolarNow/SolarGL"
+				},
+				{
+					"backtrace" : 4,
+					"isSystem" : true,
+					"path" : "E:/SolarNow/include"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				1
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 3,
+			"id" : "app::@8badf0d542dc2e21c899"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "SolarGL::@c1f92be29aaabd83290d"
 		}
 	],
 	"id" : "main::@6890427a1f51a3e7e1df",
@@ -102,7 +150,17 @@
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "SolarGL.lib",
+				"fragment" : "glfw3.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "application\\app.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "SolarGL\\SolarGL.lib",
 				"role" : "libraries"
 			},
 			{
@@ -125,7 +183,8 @@
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				0
+				0,
+				1
 			]
 		}
 	],
@@ -135,6 +194,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "src/main.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "src/glad.c",
 			"sourceGroupIndex" : 0
 		}
 	],

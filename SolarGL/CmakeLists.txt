@@ -1,0 +1,8 @@
+# 定义 app 库的源文件
+set(SOLARGL_SOURCES SolarGL.cpp)
+
+# 创建库
+add_library(SolarGL STATIC ${SOLARGL_SOURCES})
+
+# 设置头文件目录
+target_include_directories(SolarGL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

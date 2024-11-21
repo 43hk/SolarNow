@@ -1,107 +1,14 @@
 #pragma once
 
-#include <fstream>
 #include <cmath>
 #include <vector>
+#include <sstream>
+#include <iostream>
+
+#include "stb_image\stb_image.h"
 
 
-//TGA
-#pragma pack(push,1)
-struct TGA_Header {
-    char idlength;
-    char colormaptype;
-    char datatypecode;
-    short colormaporigin;
-    short colormaplength;
-    char colormapdepth;
-    short x_origin;
-    short y_origin;
-    short width;
-    short height;
-    char  bitsperpixel;
-    char  imagedescriptor;
-};
-#pragma pack(pop)
-
-
-
-struct TGAColor {
-    unsigned char bgra[4];
-    unsigned char bytespp;
-
-    TGAColor() : bgra(), bytespp(1) {
-        for (int i = 0; i < 4; i++) bgra[i] = 0;
-    }
-
-    TGAColor(unsigned char R, unsigned char G, unsigned char B, unsigned char A = 255) : bgra(), bytespp(4) {
-        bgra[0] = B;
-        bgra[1] = G;
-        bgra[2] = R;
-        bgra[3] = A;
-    }
-
-    TGAColor(unsigned char v) : bgra(), bytespp(1) {
-        for (int i = 0; i < 4; i++) bgra[i] = 0;
-        bgra[0] = v;
-    }
-
-
-    TGAColor(const unsigned char* p, unsigned char bpp) : bgra(), bytespp(bpp) {
-        for (int i = 0; i < (int)bpp; i++) {
-            bgra[i] = p[i];
-        }
-        for (int i = bpp; i < 4; i++) {
-            bgra[i] = 0;
-        }
-    }
-
-    TGAColor operator *(float intensity) const {
-        TGAColor res = *this;
-        intensity = (intensity > 1.f ? 1.f : (intensity < 0.f ? 0.f : intensity));
-        for (int i = 0; i < 4; i++) res.bgra[i] = bgra[i] * intensity;
-        return res;
-    }
-};
-
-
-class TGAImage {
-protected:
-    unsigned char* data;
-    int width;
-    int height;
-    int bytespp;
-
-    bool   load_rle_data(std::ifstream& in);
-    bool unload_rle_data(std::ofstream& out);
-public:
-    enum Format {
-        GRAYSCALE = 1, RGB = 3, RGBA = 4
-    };
-
-    TGAImage();
-    TGAImage(int w, int h, int bpp);
-    TGAImage(const TGAImage& img);
-    bool read_tga_file(const char* filename);
-    bool write_tga_file(const char* filename, bool rle = true);
-    bool flip_horizontally();
-    bool flip_vertically();
-    bool scale(int w, int h);
-    TGAColor get(int x, int y);
-    bool set(int x, int y, TGAColor& c);
-    bool set(int x, int y, const TGAColor& c);
-    ~TGAImage();
-    TGAImage& operator =(const TGAImage& img);
-    int get_width();
-    int get_height();
-    int get_bytespp();
-    unsigned char* buffer();
-    void clear();
-};
-
-//----------------------------------------------------------------------------------------
-
-
-
+//---------------------------------------------------------------------------------------
 //geometry
 class Matrix;
 
@@ -171,8 +78,38 @@ public:
 
 //-------------------------------------------------------------------------
 
+Vec2i operator/(Vec2i a, float b)
+{
+    return {static_cast<int>(a.x*b), static_cast<int>(a.y*b)};
+}
+
+struct ImageData
+{
+    int width, height;
+    std::vector<Vec3i> data;
+};
 
 
+//-------------------------------------------------------------------------
+//texture
+class Texture {
+public:
+    explicit Texture(const std::string &path);
+
+    ~Texture();
+
+    Vec3i getColor(int u, int v) const;
+
+    int get_width() const{return m_Width;}
+    int get_height() const{return m_Height;}
+
+private:
+    int m_Width, m_Height, m_Channels;
+    std::vector<unsigned char> m_Data;
+};
+
+
+//-------------------------------------------------------------------------
 //model
 class Model {
 private:
@@ -180,8 +117,8 @@ private:
     std::vector<std::vector<Vec3i>> faces_; // attention, this Vec3i means vertex/uv/normal
     std::vector<Vec3f> norms_;
     std::vector<Vec2f> uv_;
-    TGAImage diffusemap_;
-    void load_texture(std::string filename, const char* suffix, TGAImage& img);
+    Texture diffusemap_;
+    void load_texture(std::string filename, Texture& img);
 public:
     Model(const char* filename);
     ~Model();
@@ -190,8 +127,15 @@ public:
     Vec3f norm(int idx);
     Vec3f vert(int i);
     Vec2i uv(int idx);
-    TGAColor diffuse(Vec2i uv);
+    Vec3i diffuse(Vec2i uv);
     std::vector<int> face(int idx);
 
     std::vector<std::vector<Vec3i>> triangulate_face(int idx); // 新增方法：将面拆分为三角形
 };
+
+
+void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2, float &ity0, float &ity1, float &ity2,
+              Vec2i &uv0, Vec2i &uv1, Vec2i &uv2, ImageData &image, int *zbuffer);
+
+void render(Model &model, Vec3i &t0, Vec3i &t1, Vec3i &t2, float &ity0, float &ity1, float &ity2,
+              Vec2i &uv0, Vec2i &uv1, Vec2i &uv2, int *zbuffer);

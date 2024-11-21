@@ -10,6 +10,10 @@
  include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
  # 添加源代码文件
- add_executable(main src/main.cpp)
+ add_executable(main src/main.cpp  src/glad.c)
 
- target_link_libraries(main SolarGL)
+ # 添加app子目录到构建
+ add_subdirectory(application)
+ add_subdirectory(SolarGL)
+ #链接
+ target_link_libraries(main glfw3 app SolarGL)
