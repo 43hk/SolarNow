@@ -1,7 +1,7 @@
 ﻿#define STB_IMAGE_IMPLEMENTATION
 
 #include "SolarGL.h"
-#include "stb_image/stb_image.h"
+//#include "stb_image/stb_image.h"
 
 #include <cassert>
 #include <fstream>
@@ -136,6 +136,7 @@ Texture::Texture(const std::string &path) {
     stbi_image_free(data);
 }
 
+Texture::Texture(){}
 
 Texture::~Texture() {}
 
@@ -289,7 +290,6 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
                   int width,
                   Zbuffer &zbuffer,
                   Model *model,
-                  Texture &texture,
                   ImageData &image)
 {
     if (t0.y == t1.y && t0.y == t2.y) return;  // 退化三角形忽略
@@ -328,9 +328,9 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
         	float ityP = ityA + (ityB - ityA) * phi; // 当前点的光照强度
 
             int Z_idx = P.x + P.y * width;
-            if (zbuffer[Z_idx] < P.z)
+            if (zbuffer.buffer[Z_idx] < P.z)
             {
-                zbuffer[Z_idx] = P.z;
+                zbuffer.buffer[Z_idx] = P.z;
                 Vec3i color = model->getRGB(uvP);  // 获取纹理颜色
                 image.set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : ambient_light));
             }
@@ -377,3 +377,4 @@ void render(Matrix &ViewPort, Matrix &Projection,
         }
     }
 }
+
