@@ -155,44 +155,50 @@ Vec3i Texture::getColor(int u, int v) const {
 //-----------------------------------------------------------------------------
 
 //model
-Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(){
+Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), texture_()
+{
     std::ifstream in;
     in.open(filename, std::ifstream::in);
     if (in.fail()) return;
     std::string line;
-    while (!in.eof()) {
+    while (!in.eof())
+    {
         std::getline(in, line);
         std::istringstream iss(line.c_str());
         char trash;
-        if (!line.compare(0, 2, "v ")) {
+        if (!line.compare(0, 2, "v "))
+        {
             iss >> trash;
             Vec3f v;
             for (int i = 0; i < 3; i++) iss >> v[i];
             verts_.push_back(v);
-        }
-        else if (!line.compare(0, 3, "vn ")) {
+        } else if (!line.compare(0, 3, "vn "))
+        {
             iss >> trash >> trash;
             Vec3f n;
             for (int i = 0; i < 3; i++) iss >> n[i];
             norms_.push_back(n);
-        }
-        else if (!line.compare(0, 3, "vt ")) {
+        } else if (!line.compare(0, 3, "vt "))
+        {
             iss >> trash >> trash;
             Vec2f uv;
             for (int i = 0; i < 2; i++) iss >> uv[i];
             uv_.push_back(uv);
-        }
-        else if (!line.compare(0, 2, "f ")) {
+        } else if (!line.compare(0, 2, "f "))
+        {
             std::vector<Vec3i> f;
             Vec3i tmp;
             iss >> trash;
             // 动态解析每个顶点
-            while (iss >> tmp[0]) {
+            while (iss >> tmp[0])
+            {
                 tmp[1] = tmp[2] = 0; // 默认值
-                if (iss.peek() == '/') {
+                if (iss.peek() == '/')
+                {
                     iss >> trash;
                     if (iss.peek() != '/') iss >> tmp[1]; // 纹理索引
-                    if (iss.peek() == '/') {
+                    if (iss.peek() == '/')
+                    {
                         iss >> trash >> tmp[2]; // 法线索引
                     }
                 }
@@ -202,21 +208,33 @@ Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(){
             faces_.push_back(f); // 存储面
         }
     }
-    std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << " vt# " << uv_.size() << " vn# " << norms_.size() << std::endl;
+
+    // 加载同名PNG文件
+    std::string texture_filename = std::string(filename) + ".png";
+    texture_ = Texture(texture_filename);
+    if (texture_.getWidth() > 0 && texture_.getHeight() > 0)
+    {
+        std::cerr << "Texture loaded: " << texture_filename << " - " << texture_.getWidth() << "x" << texture_.getHeight() << std::endl;
+    }
+    else
+    {
+        std::cerr << "Failed to load texture: " << texture_filename << std::endl;
+    }
+
+    std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << " vt# " << uv_.size() << " vn# " << norms_.
+            size() << std::endl;
 }
 
-Model::~Model() {
-}
+Model::~Model() {}
 
-int Model::nverts() {
-    return (int)verts_.size();
-}
 
-int Model::nfaces() {
+int Model::nfaces()
+{
     return (int)faces_.size();
 }
 
-std::vector<int> Model::face(int idx) {
+std::vector<int> Model::face(int idx)
+{
     std::vector<int> face;
     for (Vec3i v : faces_[idx]) {
         face.push_back(v[0]); // 只提取顶点索引
@@ -224,21 +242,30 @@ std::vector<int> Model::face(int idx) {
     return face;
 }
 
-Vec3f Model::getVert(int idx) {
+Vec3f Model::getVert(int idx)
+{
     return verts_[idx];
 }
 
 
-Vec2i Model::getUv(int idx) {
+Vec2i Model::getUv(int idx)
+{
     return Vec2i(uv_[idx].x * texture_.getWidth(), uv_[idx].y * texture_.getHeight());
 }
 
-Vec3f Model::getNorm(int idx) {
+Vec3f Model::getNorm(int idx)
+{
     return norms_[idx].normalize();
 }
 
+Vec3i Model::getRGB(Vec2i uv) const
+{
+    return texture_.getColor(uv[0], uv[1]);
+}
+
+
 std::vector<std::vector<Vec3i>> Model::triangulate_face(int idx) {
-    std::vector<Vec3i>& face = faces_[idx];
+    std::vector<Vec3i> &face = faces_[idx];
     std::vector<std::vector<Vec3i>> triangles;
 
     if (face.size() == 4)
@@ -260,8 +287,8 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
                   Vec2i &uv0, Vec2i &uv1, Vec2i &uv2,
                   float ambient_light,
                   int width,
-                  int *zbuffer,
-                  Model &model,
+                  Zbuffer &zbuffer,
+                  Model *model,
                   Texture &texture,
                   ImageData &image)
 {
@@ -304,7 +331,7 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
             if (zbuffer[Z_idx] < P.z)
             {
                 zbuffer[Z_idx] = P.z;
-                Vec3i color = model.getRGB(uvP);  // 获取纹理颜色
+                Vec3i color = model->getRGB(uvP);  // 获取纹理颜色
                 image.set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : ambient_light));
             }
         }
@@ -312,22 +339,18 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
 }
 
 
-void render(Vec3i &t0, Vec3i &t1, Vec3i &t2,
-            float &ity0, float &ity1, float &ity2,
-            Vec2i &uv0, Vec2i &uv1,Vec2i &uv2,
-            Matrix &ViewPort, Matrix &Projection,
+void render(Matrix &ViewPort, Matrix &Projection,
             Vec3f &light_dir,
             float ambient_light,
             int width,
             int height,
-            int *zbuffer,
-            Model &model,
-            Texture &texture,
+            Zbuffer &zbuffer,
+            Model *model,
             ImageData &image)
 {
-    for (int i = 0; i < model.nfaces(); i++)
+    for (int i = 0; i < model->nfaces(); i++)
     {
-        auto triangles = model.triangulate_face(i); // 将面拆分为多个三角形
+        auto triangles = model->triangulate_face(i); // 将面拆分为多个三角形
 
         for (auto &triangle : triangles)
         {
@@ -338,9 +361,9 @@ void render(Vec3i &t0, Vec3i &t1, Vec3i &t2,
             for (int j = 0; j < 3; j++)
             {
                 Vec3i idx = triangle[j];
-                screen_coords[j] = Vec3f(ViewPort * Projection * Matrix(model.getVert(idx[0])));
-                uv[j] = model.getUv(idx[1]);
-                intensity[j] = std::max(model.getNorm(idx[2]) * light_dir, 0.f);
+                screen_coords[j] = Vec3f(ViewPort * Projection * Matrix(model->getVert(idx[0])));
+                uv[j] = model->getUv(idx[1]);
+                intensity[j] = std::max(model->getNorm(idx[2]) * light_dir, 0.f);
             }
 
             triangleDraw(screen_coords[0], screen_coords[1], screen_coords[2],
@@ -350,7 +373,6 @@ void render(Vec3i &t0, Vec3i &t1, Vec3i &t2,
                      width,
                      zbuffer,
                      model,
-                     texture,
                      image);
         }
     }

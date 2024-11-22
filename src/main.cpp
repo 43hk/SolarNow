@@ -60,7 +60,6 @@ void OnKey(int key, int action, int mods)
 
 
 int main(int argc, char **argv) {
-	//model = new Model("model/earth_day.obj");
 
 	//申请zbuffer
 	Zbuffer z_buffer(width, height);
@@ -83,16 +82,32 @@ int main(int argc, char **argv) {
 	glViewport(0, 0, 1920, 1080);
 	glClearColor(0.2f, 0.2f, 0.22f, 1.0f);
 
+	ImageData image;
+
+	model = new Model("model/earth_day.obj");
+
+	render(ViewPort,Projection,
+			   light_dir,
+			   ambient_light,
+			   width,
+			   height,
+			   z_buffer,
+			   model,
+			   image);
+
 	//窗体循环
 	while (app->update())
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
+
+
+
 	}
 
 	app->destroy();
 
 	delete model;
-	z_buffer.destroy();
+	z_buffer.fresh();
 
 	return 0;
 }
