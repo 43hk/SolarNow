@@ -18,15 +18,6 @@ msvc_deps_prefix = 注意: 包含文件:
 
 
 #############################################
-# Rule for compiling C files.
-
-rule C_COMPILER__main_unscanned_Release
-  deps = msvc
-  command = ${LAUNCHER}${CODE_CHECK}D:\VisualStudio\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64\cl.exe  /nologo $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
-  description = Building C object $out
-
-
-#############################################
 # Rule for compiling CXX files.
 
 rule CXX_COMPILER__main_unscanned_Release
@@ -55,24 +46,6 @@ rule CUSTOM_COMMAND
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__app_unscanned_Release
-  deps = msvc
-  command = ${LAUNCHER}${CODE_CHECK}D:\VisualStudio\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64\cl.exe  /nologo /TP $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
-  description = Building CXX object $out
-
-
-#############################################
-# Rule for linking CXX static library.
-
-rule CXX_STATIC_LIBRARY_LINKER__app_Release
-  command = C:\WINDOWS\system32\cmd.exe /C "$PRE_LINK && D:\VisualStudio\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64\lib.exe /nologo $LINK_FLAGS /out:$TARGET_FILE $in && $POST_BUILD"
-  description = Linking CXX static library $TARGET_FILE
-  restat = $RESTAT
-
-
-#############################################
-# Rule for compiling CXX files.
-
 rule CXX_COMPILER__SolarGL_unscanned_Release
   deps = msvc
   command = ${LAUNCHER}${CODE_CHECK}D:\VisualStudio\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64\cl.exe  /nologo /TP $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
@@ -83,6 +56,24 @@ rule CXX_COMPILER__SolarGL_unscanned_Release
 # Rule for linking CXX static library.
 
 rule CXX_STATIC_LIBRARY_LINKER__SolarGL_Release
+  command = C:\WINDOWS\system32\cmd.exe /C "$PRE_LINK && D:\VisualStudio\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64\lib.exe /nologo $LINK_FLAGS /out:$TARGET_FILE $in && $POST_BUILD"
+  description = Linking CXX static library $TARGET_FILE
+  restat = $RESTAT
+
+
+#############################################
+# Rule for compiling CXX files.
+
+rule CXX_COMPILER__tga_unscanned_Release
+  deps = msvc
+  command = ${LAUNCHER}${CODE_CHECK}D:\VisualStudio\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64\cl.exe  /nologo /TP $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
+  description = Building CXX object $out
+
+
+#############################################
+# Rule for linking CXX static library.
+
+rule CXX_STATIC_LIBRARY_LINKER__tga_Release
   command = C:\WINDOWS\system32\cmd.exe /C "$PRE_LINK && D:\VisualStudio\VC\Tools\MSVC\14.42.34433\bin\Hostx64\x64\lib.exe /nologo $LINK_FLAGS /out:$TARGET_FILE $in && $POST_BUILD"
   description = Linking CXX static library $TARGET_FILE
   restat = $RESTAT

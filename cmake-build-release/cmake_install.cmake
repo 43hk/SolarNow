@@ -34,12 +34,12 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/SolarNow/cmake-build-release/application/cmake_install.cmake")
+  include("E:/SolarNow/cmake-build-release/SolarGL/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/SolarNow/cmake-build-release/SolarGL/cmake_install.cmake")
+  include("E:/SolarNow/cmake-build-release/tgaimage/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)

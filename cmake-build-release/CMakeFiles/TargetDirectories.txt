@@ -1,9 +1,9 @@
 E:/SolarNow/cmake-build-release/CMakeFiles/main.dir
 E:/SolarNow/cmake-build-release/CMakeFiles/edit_cache.dir
 E:/SolarNow/cmake-build-release/CMakeFiles/rebuild_cache.dir
-E:/SolarNow/cmake-build-release/application/CMakeFiles/app.dir
-E:/SolarNow/cmake-build-release/application/CMakeFiles/edit_cache.dir
-E:/SolarNow/cmake-build-release/application/CMakeFiles/rebuild_cache.dir
 E:/SolarNow/cmake-build-release/SolarGL/CMakeFiles/SolarGL.dir
 E:/SolarNow/cmake-build-release/SolarGL/CMakeFiles/edit_cache.dir
 E:/SolarNow/cmake-build-release/SolarGL/CMakeFiles/rebuild_cache.dir
+E:/SolarNow/cmake-build-release/tgaimage/CMakeFiles/tga.dir
+E:/SolarNow/cmake-build-release/tgaimage/CMakeFiles/edit_cache.dir
+E:/SolarNow/cmake-build-release/tgaimage/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,8 @@
+# 定义库的源文件
+set(TGA_SOURCES tgaimage.cpp)
+
+# 创建库
+add_library(tga STATIC ${TGA_SOURCES})
+
+# 设置头文件目录
+target_include_directories(tga PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -5,7 +5,8 @@
 #include <sstream>
 #include <iostream>
 
-#include <stb_image/stb_image.h>
+#include "stb_image/stb_image.h"
+#include "tgaimage.h"
 
 //---------------------------------------------------------------------------------------
 //geometry
@@ -75,52 +76,6 @@ public:
     friend std::ostream& operator<<(std::ostream& s, Matrix& m);
 };
 
-//-------------------------------------------------------------------------
-
-struct ImageData
-{
-    int width, height;
-    std::vector<Vec3i> data;
-    void set(const int &x, const int &y, const Vec3i &color)
-    {
-        data[x + y * width] = color;
-    }
-};
-
-
-//-------------------------------------------------------------------------
-//texture
-class Texture
-{
-public:
-    explicit Texture(const std::string &path);
-    Texture();
-    ~Texture();
-
-    Vec3i getColor(int u, int v) const;
-
-    int getWidth() const{return m_Width;}
-    int getHeight() const{return m_Height;}
-  
-private:
-    void load(const std::string &path)
-    {
-        unsigned char* data = stbi_load(path.c_str(), &m_Width, &m_Height, &m_Channels, 0);
-        if (data)
-        {
-            m_Data.assign(data, data + m_Width * m_Height * m_Channels);
-            stbi_image_free(data);
-        }
-        else
-        {
-            std::cerr << "Failed to load texture: " << path << std::endl;
-        }
-    }
-
-    int m_Width, m_Height, m_Channels;
-    std::vector<unsigned char> m_Data;
-};
-
 
 //-------------------------------------------------------------------------
 //model
@@ -130,7 +85,8 @@ private:
     std::vector<std::vector<Vec3i>> faces_; // attention, this Vec3i means vertex/uv/normal
     std::vector<Vec3f> norms_;
     std::vector<Vec2f> uv_;
-    Texture texture_;
+    TGAImage diffusemap_;
+    void load_texture(std::string filename, const char *suffix, TGAImage &img);
 public:
     Model(const char* filename);
     ~Model();
@@ -138,9 +94,8 @@ public:
     Vec3f getNorm(int idx);
     Vec3f getVert(int idx);
     Vec2i getUv(int idx);
-    Vec3i getRGB(Vec2i uv) const;
+    TGAColor diffuse(Vec2i uv);
     std::vector<int> face(int idx);
-
     std::vector<std::vector<Vec3i>> triangulate_face(int idx); // 新增方法：将面拆分为三角形
 };
 
@@ -151,7 +106,7 @@ struct Zbuffer {
     //缓存区
     std::vector<int> buffer;
 
-    Zbuffer(int w, int h) : width(w), height(h), buffer(w * h)
+    Zbuffer(const int w, const int h) : width(w), height(h), buffer(w * h)
     {
         for (int i=0; i<width*height; i++)
         {
@@ -165,14 +120,6 @@ struct Zbuffer {
         buffer = std::vector<int>();;
     }
 
-
-    void fresh()
-    {
-        for (int i=0; i<width*height; i++)
-        {
-            buffer[i] = std::numeric_limits<int>::min();
-        }
-    }
 };
 
 
@@ -183,7 +130,7 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
                   int width,
                   Zbuffer &zbuffer,
                   Model *model,
-                  ImageData &image);
+                  TGAImage &image);
 
 void render(Matrix &ViewPort, Matrix &Projection,
             Vec3f &light_dir,
@@ -192,5 +139,6 @@ void render(Matrix &ViewPort, Matrix &Projection,
             int height,
             Zbuffer &zbuffer,
             Model *model,
-            ImageData &image);
+            TGAImage &image);
 
+std::vector<std::string> getImageFiles(const std::string& directory);

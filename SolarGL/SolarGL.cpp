@@ -1,15 +1,16 @@
 ﻿#define STB_IMAGE_IMPLEMENTATION
 
 #include "SolarGL.h"
-//#include "stb_image/stb_image.h"
 
 #include <cassert>
 #include <fstream>
 #include <sstream>
-#include <iostream>
+#include <filesystem>
+#include <stdexcept>
+
+namespace fs = std::filesystem;
 
 //---------------------------------------------------------------------------------------
-
 //geometry
 template <> Vec3<float>::Vec3(Matrix m) : x(m[0][0] / m[3][0]), y(m[1][0] / m[3][0]), z(m[2][0] / m[3][0]) {}
 template <> template <> Vec3<int>::Vec3(const Vec3<float>& v) : x(int(v.x + .5)), y(int(v.y + .5)), z(int(v.z + .5)) {}
@@ -124,39 +125,8 @@ std::ostream& operator<<(std::ostream& s, Matrix& m) {
 
 
 //-----------------------------------------------------------------------------
-//texture
-Texture::Texture(const std::string &path) {
-    // 使用 stb_image 库加载纹理
-    unsigned char *data = stbi_load(path.c_str(), &m_Width, &m_Height, &m_Channels, 0);
-    if (!data) {
-        throw std::runtime_error("Failed to load texture: " + path);
-    }
-
-    m_Data.assign(data, data + m_Width * m_Height * m_Channels);
-    stbi_image_free(data);
-}
-
-Texture::Texture(){}
-
-Texture::~Texture() {}
-
-
-Vec3i Texture::getColor(int u, int v) const {
-    if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) {
-        throw std::out_of_range("贴图坐标超出边界");
-    }
-
-    int index = (u + v * m_Width) * m_Channels;
-    return Vec3i(m_Data[index], m_Data[index + 1], m_Data[index + 2]);
-}
-
-
-
-
-//-----------------------------------------------------------------------------
-
 //model
-Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), texture_()
+Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), diffusemap_()
 {
     std::ifstream in;
     in.open(filename, std::ifstream::in);
@@ -210,17 +180,7 @@ Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), textur
         }
     }
 
-    // 加载同名PNG文件
-    std::string texture_filename = std::string(filename) + ".png";
-    texture_ = Texture(texture_filename);
-    if (texture_.getWidth() > 0 && texture_.getHeight() > 0)
-    {
-        std::cerr << "Texture loaded: " << texture_filename << " - " << texture_.getWidth() << "x" << texture_.getHeight() << std::endl;
-    }
-    else
-    {
-        std::cerr << "Failed to load texture: " << texture_filename << std::endl;
-    }
+    load_texture(filename, ".tga", diffusemap_);
 
     std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << " vt# " << uv_.size() << " vn# " << norms_.
             size() << std::endl;
@@ -248,22 +208,29 @@ Vec3f Model::getVert(int idx)
     return verts_[idx];
 }
 
+void Model::load_texture(std::string filename, const char *suffix, TGAImage &img) {
+    std::string texfile(filename);
+    size_t dot = texfile.find_last_of(".");
+    if (dot!=std::string::npos) {
+        texfile = texfile.substr(0,dot) + std::string(suffix);
+        std::cerr << "texture file " << texfile << " loading " << (img.read_tga_file(texfile.c_str()) ? "ok" : "failed") << std::endl;
+        img.flip_vertically();
+    }
+}
+
+TGAColor Model::diffuse(Vec2i uv) {
+    return diffusemap_.get(uv.x , uv.y);
+}
 
 Vec2i Model::getUv(int idx)
 {
-    return Vec2i(uv_[idx].x * texture_.getWidth(), uv_[idx].y * texture_.getHeight());
+    return Vec2i(uv_[idx].x * diffusemap_.get_width(), uv_[idx].y * diffusemap_.get_height());
 }
 
 Vec3f Model::getNorm(int idx)
 {
     return norms_[idx].normalize();
 }
-
-Vec3i Model::getRGB(Vec2i uv) const
-{
-    return texture_.getColor(uv[0], uv[1]);
-}
-
 
 std::vector<std::vector<Vec3i>> Model::triangulate_face(int idx) {
     std::vector<Vec3i> &face = faces_[idx];
@@ -290,7 +257,7 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
                   int width,
                   Zbuffer &zbuffer,
                   Model *model,
-                  ImageData &image)
+                  TGAImage &image)
 {
     if (t0.y == t1.y && t0.y == t2.y) return;  // 退化三角形忽略
 
@@ -331,12 +298,14 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
             if (zbuffer.buffer[Z_idx] < P.z)
             {
                 zbuffer.buffer[Z_idx] = P.z;
-                Vec3i color = model->getRGB(uvP);  // 获取纹理颜色
+                TGAColor color = model->diffuse(uvP);  // 获取纹理颜色
                 image.set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : ambient_light));
             }
         }
+
     }
 }
+
 
 
 void render(Matrix &ViewPort, Matrix &Projection,
@@ -346,7 +315,7 @@ void render(Matrix &ViewPort, Matrix &Projection,
             int height,
             Zbuffer &zbuffer,
             Model *model,
-            ImageData &image)
+            TGAImage &image)
 {
     for (int i = 0; i < model->nfaces(); i++)
     {
@@ -377,4 +346,24 @@ void render(Matrix &ViewPort, Matrix &Projection,
         }
     }
 }
+
+
+// 函数：获取指定目录下的所有 .jpg 和 .png 文件名
+std::vector<std::string> getImageFiles(const std::string& directory) {
+    std::vector<std::string> imageFiles;
+    try {
+        for (const auto& entry : fs::directory_iterator(directory)) {
+            if (entry.is_regular_file()) {
+                std::string extension = entry.path().extension().string();
+                if (extension == ".jpg" || extension == ".png") {
+                    imageFiles.push_back(entry.path().filename().string());
+                }
+            }
+        }
+    } catch (const fs::filesystem_error& e) {
+        throw std::runtime_error(std::string("File system error: ") + e.what());
+    }
+    return imageFiles;
+}
+
 

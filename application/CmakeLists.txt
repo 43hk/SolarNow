@@ -1,8 +1,0 @@
-# 定义 app 库的源文件
-set(APP_SOURCES application.cpp)
-
-# 创建库
-add_library(app STATIC ${APP_SOURCES})
-
-# 设置头文件目录
-target_include_directories(app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
