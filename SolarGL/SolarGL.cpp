@@ -1,4 +1,5 @@
-﻿
+﻿#define STB_IMAGE_IMPLEMENTATION
+
 #include "SolarGL.h"
 #include "stb_image/stb_image.h"
 
@@ -120,53 +121,41 @@ std::ostream& operator<<(std::ostream& s, Matrix& m) {
     return s;
 }
 
+
+
 //-----------------------------------------------------------------------------
-
 //texture
+Texture::Texture(const std::string &path) {
+    // 使用 stb_image 库加载纹理
+    unsigned char *data = stbi_load(path.c_str(), &m_Width, &m_Height, &m_Channels, 0);
+    if (!data) {
+        throw std::runtime_error("Failed to load texture: " + path);
+    }
 
-Texture::Texture(const std::string& path = nullptr)
-{
-    // 加载纹理
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        m_Width = width;
-        m_Height = height;
-        m_Channels = nrChannels;
-        m_Data.resize(width * height * nrChannels);
-        memcpy(m_Data.data(), data, m_Data.size());
-        stbi_image_free(data); // 释放资源
-    }
-    else
-    {
-        // 处理错误
-        std::cerr << "Failed to load texture: " << path << std::endl;
-    }
+    m_Data.assign(data, data + m_Width * m_Height * m_Channels);
+    stbi_image_free(data);
 }
+
 
 Texture::~Texture() {}
 
-Vec3i Texture::getColor(int u, int v) const
-{
-    // 防止坐标超出范围
-    u = std::min(std::max(u, 0), m_Width - 1);
-    v = std::min(std::max(v, 0), m_Height - 1);
 
-    int index = (u * m_Width + v) * m_Channels;
-    //返回颜色值
-    return Vec3i(
-    m_Data[index],
-    m_Data[index + 1],
-    m_Data[index + 2]
-    );
+Vec3i Texture::getColor(int u, int v) const {
+    if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) {
+        throw std::out_of_range("贴图坐标超出边界");
+    }
+
+    int index = (u + v * m_Width) * m_Channels;
+    return Vec3i(m_Data[index], m_Data[index + 1], m_Data[index + 2]);
 }
+
+
 
 
 //-----------------------------------------------------------------------------
 
 //model
-Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), diffusemap_() {
+Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(){
     std::ifstream in;
     in.open(filename, std::ifstream::in);
     if (in.fail()) return;
@@ -214,7 +203,6 @@ Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), diffus
         }
     }
     std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << " vt# " << uv_.size() << " vn# " << norms_.size() << std::endl;
-    load_texture(filename, diffusemap_);
 }
 
 Model::~Model() {
@@ -236,23 +224,16 @@ std::vector<int> Model::face(int idx) {
     return face;
 }
 
-Vec3f Model::vert(int i) {
-    return verts_[i];
+Vec3f Model::getVert(int idx) {
+    return verts_[idx];
 }
 
-void Model::load_texture(std::string filename, Texture &img) {
 
+Vec2i Model::getUv(int idx) {
+    return Vec2i(uv_[idx].x * texture_.getWidth(), uv_[idx].y * texture_.getHeight());
 }
 
-Vec3i Model::diffuse(Vec2i uv) {
-    return diffusemap_.getColor(uv.x, uv.y);
-}
-
-Vec2i Model::uv(int idx) {
-    return Vec2i(uv_[idx].x * diffusemap_.get_width(), uv_[idx].y * diffusemap_.get_height());
-}
-
-Vec3f Model::norm(int idx) {
+Vec3f Model::getNorm(int idx) {
     return norms_[idx].normalize();
 }
 
@@ -277,11 +258,12 @@ std::vector<std::vector<Vec3i>> Model::triangulate_face(int idx) {
 void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
                   float &ity0, float &ity1, float &ity2,
                   Vec2i &uv0, Vec2i &uv1, Vec2i &uv2,
-                  Model &model,
-                  ImageData &image,
-                  int ambient_light,
+                  float ambient_light,
                   int width,
-                  int *zbuffer)
+                  int *zbuffer,
+                  Model &model,
+                  Texture &texture,
+                  ImageData &image)
 {
     if (t0.y == t1.y && t0.y == t2.y) return;  // 退化三角形忽略
 
@@ -318,11 +300,11 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
 
         	float ityP = ityA + (ityB - ityA) * phi; // 当前点的光照强度
 
-            int idx = P.x + P.y * width;
-            if (zbuffer[idx] < P.z)
+            int Z_idx = P.x + P.y * width;
+            if (zbuffer[Z_idx] < P.z)
             {
-                zbuffer[idx] = P.z;
-                Vec3i color = model.diffuse(uvP);  // 获取纹理颜色
+                zbuffer[Z_idx] = P.z;
+                Vec3i color = model.getRGB(uvP);  // 获取纹理颜色
                 image.set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : ambient_light));
             }
         }
@@ -330,14 +312,18 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
 }
 
 
-void render(Model &model,
-            Vec3i &t0, Vec3i &t1, Vec3i &t2,
+void render(Vec3i &t0, Vec3i &t1, Vec3i &t2,
             float &ity0, float &ity1, float &ity2,
             Vec2i &uv0, Vec2i &uv1,Vec2i &uv2,
             Matrix &ViewPort, Matrix &Projection,
             Vec3f &light_dir,
-            ImageData &image,
-            int *zbuffer)
+            float ambient_light,
+            int width,
+            int height,
+            int *zbuffer,
+            Model &model,
+            Texture &texture,
+            ImageData &image)
 {
     for (int i = 0; i < model.nfaces(); i++)
     {
@@ -352,15 +338,20 @@ void render(Model &model,
             for (int j = 0; j < 3; j++)
             {
                 Vec3i idx = triangle[j];
-                screen_coords[j] = Vec3f(ViewPort * Projection * Matrix(model.vert(idx[0])));
-                uv[j] = model.uv(idx[1]);
-                intensity[j] = std::max(model.norm(idx[2]) * light_dir, 0.f);
+                screen_coords[j] = Vec3f(ViewPort * Projection * Matrix(model.getVert(idx[0])));
+                uv[j] = model.getUv(idx[1]);
+                intensity[j] = std::max(model.getNorm(idx[2]) * light_dir, 0.f);
             }
 
             triangleDraw(screen_coords[0], screen_coords[1], screen_coords[2],
                      intensity[0], intensity[1], intensity[2],
                      uv[0], uv[1], uv[2],
-                     image, zbuffer);
+                     ambient_light,
+                     width,
+                     zbuffer,
+                     model,
+                     texture,
+                     image);
         }
     }
 }

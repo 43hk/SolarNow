@@ -5,8 +5,6 @@
 #include <sstream>
 #include <iostream>
 
-#include "stb_image\stb_image.h"
-
 
 //---------------------------------------------------------------------------------------
 //geometry
@@ -78,15 +76,14 @@ public:
 
 //-------------------------------------------------------------------------
 
-Vec2i operator/(Vec2i a, float b)
-{
-    return {static_cast<int>(a.x*b), static_cast<int>(a.y*b)};
-}
-
 struct ImageData
 {
     int width, height;
     std::vector<Vec3i> data;
+    void set(int x, int y, Vec3i color)
+    {
+        data[x + y * width] = color;
+    }
 };
 
 
@@ -100,9 +97,9 @@ public:
 
     Vec3i getColor(int u, int v) const;
 
-    int get_width() const{return m_Width;}
-    int get_height() const{return m_Height;}
-
+    int getWidth() const{return m_Width;}
+    int getHeight() const{return m_Height;}
+  
 private:
     int m_Width, m_Height, m_Channels;
     std::vector<unsigned char> m_Data;
@@ -117,25 +114,69 @@ private:
     std::vector<std::vector<Vec3i>> faces_; // attention, this Vec3i means vertex/uv/normal
     std::vector<Vec3f> norms_;
     std::vector<Vec2f> uv_;
-    Texture diffusemap_;
-    void load_texture(std::string filename, Texture& img);
+    Texture texture_;
 public:
     Model(const char* filename);
     ~Model();
     int nverts();
     int nfaces();
-    Vec3f norm(int idx);
-    Vec3f vert(int i);
-    Vec2i uv(int idx);
-    Vec3i diffuse(Vec2i uv);
+    Vec3f getNorm(int idx);
+    Vec3f getVert(int idx);
+    Vec2i getUv(int idx);
+    Vec3i getRGB(Vec2i uv);
     std::vector<int> face(int idx);
 
     std::vector<std::vector<Vec3i>> triangulate_face(int idx); // 新增方法：将面拆分为三角形
 };
 
 
-void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2, float &ity0, float &ity1, float &ity2,
-              Vec2i &uv0, Vec2i &uv1, Vec2i &uv2, ImageData &image, int *zbuffer);
+void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
+                  float &ity0, float &ity1, float &ity2,
+                  Vec2i &uv0, Vec2i &uv1, Vec2i &uv2,
+                  float ambient_light,
+                  int width,
+                  int *zbuffer,
+                  Model &model,
+                  Texture &texture,
+                  ImageData &image);
 
-void render(Model &model, Vec3i &t0, Vec3i &t1, Vec3i &t2, float &ity0, float &ity1, float &ity2,
-              Vec2i &uv0, Vec2i &uv1, Vec2i &uv2, int *zbuffer);
+void render(Vec3i &t0, Vec3i &t1, Vec3i &t2,
+            float &ity0, float &ity1, float &ity2,
+            Vec2i &uv0, Vec2i &uv1,Vec2i &uv2,
+            Matrix &ViewPort, Matrix &Projection,
+            Vec3f &light_dir,
+            float ambient_light,
+            int width,
+            int height,
+            int *zbuffer,
+            Model &model,
+            Texture &texture,
+            ImageData &image);
+
+struct Zbuffer {
+    int width;
+    int height;
+    std::vector<int> buffer;
+
+    Zbuffer(int w, int h) : width(w), height(h), buffer(w * h)
+    {
+        for (int i=0; i<width*height; i++)
+        {
+            buffer[i] = std::numeric_limits<int>::min();
+        }
+    }
+
+    ~Zbuffer()
+    {
+        delete buffer[];
+    }
+
+
+    void fresh()
+    {
+        for (int i=0; i<width*height; i++)
+        {
+            buffer[i] = std::numeric_limits<int>::min();
+        }
+    }
+};

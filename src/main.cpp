@@ -13,8 +13,8 @@
 
 #define app Application::getInstance()
 
-constexpr int width = 2000;
-constexpr int height = 2000;
+constexpr int width = 1920;
+constexpr int height = 1080;
 constexpr int depth = 255 ;
 
 
@@ -24,14 +24,14 @@ Vec3f camera(0,0,5);
 
 //视线方向
 Vec3f view(0, 0, -1);
-//float light_strength = 0.7;
+
 //计算半程向量
 Vec3f half = (light_dir + view).normalize();
 //创建环境光强
 constexpr float ambient_light = 0.1;
 
 Model *model = nullptr;
-int *zbuffer = nullptr;
+int *zbuffer_ptr = nullptr;
 
 Matrix viewPort(int x, int y, int w, int h)
 {
@@ -60,45 +60,39 @@ void OnKey(int key, int action, int mods)
 
 
 int main(int argc, char **argv) {
-	model = new Model("model/earth_day.obj");
+	//model = new Model("model/earth_day.obj");
 
-
-	//初始化z_buffer
-	zbuffer = new int[width*height];
-	for (int i=0; i<width*height; i++)
-	{
-		zbuffer[i] = std::numeric_limits<int>::min();
-	}
+	//申请zbuffer
+	Zbuffer z_buffer(width, height);
 
 	Matrix Projection = Matrix::identity(4);
 	Matrix ViewPort   = viewPort(width/8, height/8, width*3/4, height*3/4);
 	Projection[3][2] = -1.f/camera.z;
 
 
-
-
-
+	//初始化窗体
 	if (!app->init(1920, 1080))
 	{
 		return -1;
 	}
 
-
+	//设置回调
 	app->setResizeCallback(OnResize);
 	app->setKeyBoardCallback(OnKey);
-
+	//初始化窗体和背景色
 	glViewport(0, 0, 1920, 1080);
 	glClearColor(0.2f, 0.2f, 0.22f, 1.0f);
 
-
+	//窗体循环
 	while (app->update())
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
+
 	app->destroy();
 
 	delete model;
-	delete []zbuffer;
+	z_buffer.destroy();
 
 	return 0;
 }
