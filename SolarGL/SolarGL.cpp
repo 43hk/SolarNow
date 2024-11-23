@@ -183,9 +183,6 @@ Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), diffus
     }
 
     load_texture(filename, ".tga", diffusemap_);
-
-    std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << " vt# " << uv_.size() << " vn# " << norms_.
-            size() << std::endl;
 }
 
 Model::~Model() {}
@@ -215,7 +212,7 @@ void Model::load_texture(std::string filename, const char *suffix, TGAImage &img
     size_t dot = texfile.find_last_of(".");
     if (dot!=std::string::npos) {
         texfile = texfile.substr(0,dot) + std::string(suffix);
-        std::cerr << "texture file " << texfile << " loading " << (img.read_tga_file(texfile.c_str()) ? "ok" : "failed") << std::endl;
+        std::cerr << "texture file " << texfile << " loading " << std::endl << (img.read_tga_file(texfile.c_str()) ? "ok" : "failed") << std::endl;
         img.flip_vertically();
     }
 }
@@ -310,7 +307,7 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
 
 
 
-void render(Matrix &ViewPort, Matrix &Projection, Matrix &Rotaion,
+void render(Matrix &ViewPort, Matrix &Projection, Matrix &Rotation,
             Vec3f &light_dir,
             float ambient_light,
             int width,
@@ -332,7 +329,7 @@ void render(Matrix &ViewPort, Matrix &Projection, Matrix &Rotaion,
             for (int j = 0; j < 3; j++)
             {
                 Vec3i idx = triangle[j];
-                screen_coords[j] = Vec3f(ViewPort * Projection * Rotaion * Matrix(model->getVert(idx[0])));
+                screen_coords[j] = Vec3f(ViewPort * Projection * Rotation * Matrix(model->getVert(idx[0])));
                 uv[j] = model->getUv(idx[1]);
                 intensity[j] = std::max(model->getNorm(idx[2]) * light_dir, 0.f);
             }

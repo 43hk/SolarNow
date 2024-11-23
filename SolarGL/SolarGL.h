@@ -102,7 +102,8 @@ public:
 };
 
 
-struct Zbuffer {
+struct Zbuffer
+{
     int width;
     int height;
     //缓存区
@@ -119,7 +120,7 @@ struct Zbuffer {
     ~Zbuffer()
     {
         //缓存缩为0
-        buffer = std::vector<int>();;
+        buffer = std::vector<int>();
     }
     void fresh()
     {
