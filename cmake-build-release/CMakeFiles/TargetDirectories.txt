@@ -1,4 +1,4 @@
-E:/SolarNow/cmake-build-release/CMakeFiles/main.dir
+E:/SolarNow/cmake-build-release/CMakeFiles/SolarNow.dir
 E:/SolarNow/cmake-build-release/CMakeFiles/edit_cache.dir
 E:/SolarNow/cmake-build-release/CMakeFiles/rebuild_cache.dir
 E:/SolarNow/cmake-build-release/SolarGL/CMakeFiles/SolarGL.dir

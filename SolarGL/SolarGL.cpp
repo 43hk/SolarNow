@@ -16,6 +16,8 @@ template <> Vec3<float>::Vec3(Matrix m) : x(m[0][0] / m[3][0]), y(m[1][0] / m[3]
 template <> template <> Vec3<int>::Vec3(const Vec3<float>& v) : x(int(v.x + .5)), y(int(v.y + .5)), z(int(v.z + .5)) {}
 template <> template <> Vec3<float>::Vec3(const Vec3<int>& v) : x(v.x), y(v.y), z(v.z) {}
 
+
+
 Matrix::Matrix(Vec3f v) : m(std::vector<std::vector<float> >(4, std::vector<float>(1, 1.f))), rows(4), cols(1) {
     m[0][0] = v.x;
     m[1][0] = v.y;
@@ -308,7 +310,7 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
 
 
 
-void render(Matrix &ViewPort, Matrix &Projection,
+void render(Matrix &ViewPort, Matrix &Projection, Matrix &Rotaion,
             Vec3f &light_dir,
             float ambient_light,
             int width,
@@ -330,7 +332,7 @@ void render(Matrix &ViewPort, Matrix &Projection,
             for (int j = 0; j < 3; j++)
             {
                 Vec3i idx = triangle[j];
-                screen_coords[j] = Vec3f(ViewPort * Projection * Matrix(model->getVert(idx[0])));
+                screen_coords[j] = Vec3f(ViewPort * Projection * Rotaion * Matrix(model->getVert(idx[0])));
                 uv[j] = model->getUv(idx[1]);
                 intensity[j] = std::max(model->getNorm(idx[2]) * light_dir, 0.f);
             }
@@ -348,22 +350,15 @@ void render(Matrix &ViewPort, Matrix &Projection,
 }
 
 
-// 函数：获取指定目录下的所有 .jpg 和 .png 文件名
-std::vector<std::string> getImageFiles(const std::string& directory) {
-    std::vector<std::string> imageFiles;
-    try {
-        for (const auto& entry : fs::directory_iterator(directory)) {
-            if (entry.is_regular_file()) {
-                std::string extension = entry.path().extension().string();
-                if (extension == ".jpg" || extension == ".png") {
-                    imageFiles.push_back(entry.path().filename().string());
-                }
-            }
+// 函数：获取指定目录下的 .png 文件名
+std::vector<std::string> getImageFiles(const std::string& dir) {
+    std::vector<std::string> files;
+    for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+        if (entry.is_regular_file() && entry.path().extension() == ".png") {
+            files.push_back(entry.path().filename().string());
         }
-    } catch (const fs::filesystem_error& e) {
-        throw std::runtime_error(std::string("File system error: ") + e.what());
     }
-    return imageFiles;
+    return files;
 }
 
 

@@ -8,6 +8,8 @@
 #include "stb_image/stb_image.h"
 #include "tgaimage.h"
 
+
+
 //---------------------------------------------------------------------------------------
 //geometry
 class Matrix;
@@ -119,6 +121,13 @@ struct Zbuffer {
         //缓存缩为0
         buffer = std::vector<int>();;
     }
+    void fresh()
+    {
+        for (int i=0; i<width*height; i++)
+        {
+            buffer[i] = std::numeric_limits<int>::min();
+        }
+    }
 
 };
 
@@ -132,7 +141,7 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
                   Model *model,
                   TGAImage &image);
 
-void render(Matrix &ViewPort, Matrix &Projection,
+void render(Matrix &ViewPort, Matrix &Projection, Matrix &Rotation,
             Vec3f &light_dir,
             float ambient_light,
             int width,

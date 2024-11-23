@@ -78,21 +78,21 @@
 				{
 					"directoryIndex" : 1,
 					"id" : "SolarGL::@c1f92be29aaabd83290d",
-					"jsonFile" : "target-SolarGL-Release-d6457bedf41764c11aa3.json",
+					"jsonFile" : "target-SolarGL-Release-cfd47239142fc8cba147.json",
 					"name" : "SolarGL",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
-					"id" : "main::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-main-Release-52043db1c0b2195ccd24.json",
-					"name" : "main",
+					"id" : "SolarNow::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-SolarNow-Release-d8db044defba0be04294.json",
+					"name" : "SolarNow",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 2,
 					"id" : "tga::@f5c5f250c3b708777aec",
-					"jsonFile" : "target-tga-Release-74234754190f50c7b0ff.json",
+					"jsonFile" : "target-tga-Release-da6228b3f3e965383bce.json",
 					"name" : "tga",
 					"projectIndex" : 0
 				}

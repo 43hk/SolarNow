@@ -1,0 +1,13 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "SolarGL\\CMakeFiles\\SolarGL.dir\\SolarGL.cpp.obj",
+            "outputs": [
+                "SolarGL\\CMakeFiles\\SolarGL.dir\\SolarGL.cpp.obj.ddi"
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "tgaimage\\CMakeFiles\\tga.dir\\tgaimage.cpp.obj",
+            "outputs": [
+                "tgaimage\\CMakeFiles\\tga.dir\\tgaimage.cpp.obj.ddi"
+            ],
+            "requires": []
+        }
+    ]
+}

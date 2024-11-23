@@ -41,41 +41,62 @@ include CMakeFiles\rules.ninja
 
 cmake_ninja_workdir = E$:\SolarNow\cmake-build-release\
 # =============================================================================
-# Object build statements for EXECUTABLE target main
+# Object build statements for EXECUTABLE target SolarNow
 
 
 #############################################
-# Order-only phony target for main
+# Order-only phony target for SolarNow
 
-build cmake_object_order_depends_target_main: phony || cmake_object_order_depends_target_SolarGL cmake_object_order_depends_target_tga
+build cmake_object_order_depends_target_SolarNow: phony || cmake_object_order_depends_target_SolarGL cmake_object_order_depends_target_tga
 
-build CMakeFiles\main.dir\src\main.cpp.obj: CXX_COMPILER__main_unscanned_Release E$:\SolarNow\src\main.cpp || cmake_object_order_depends_target_main
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++17 -MD
+build CMakeFiles\SolarNow.dir\src\main.cpp.obj.ddi: CXX_SCAN__SolarNow_Release E$:\SolarNow\src\main.cpp || cmake_object_order_depends_target_SolarNow
+  DEP_FILE = CMakeFiles\SolarNow.dir\src\main.cpp.obj.ddi.d
+  DYNDEP_INTERMEDIATE_FILE = CMakeFiles\SolarNow.dir\src\main.cpp.obj.ddi
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD
   INCLUDES = -IE:\SolarNow\SolarGL -IE:\SolarNow\tgaimage -external:IE:\SolarNow\include -external:W0
-  OBJECT_DIR = CMakeFiles\main.dir
-  OBJECT_FILE_DIR = CMakeFiles\main.dir\src
-  TARGET_COMPILE_PDB = CMakeFiles\main.dir\
-  TARGET_PDB = main.pdb
+  OBJ_FILE = CMakeFiles\SolarNow.dir\src\main.cpp.obj
+  PREPROCESSED_OUTPUT_FILE = CMakeFiles\SolarNow.dir\src\main.cpp.obj.ddi.i
+
+build CMakeFiles\SolarNow.dir\src\main.cpp.obj: CXX_COMPILER__SolarNow_scanned_Release E$:\SolarNow\src\main.cpp | CMakeFiles\SolarNow.dir\src\main.cpp.obj.modmap || cmake_object_order_depends_target_SolarNow CMakeFiles\SolarNow.dir\CXX.dd
+  DYNDEP_MODULE_MAP_FILE = CMakeFiles\SolarNow.dir\src\main.cpp.obj.modmap
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD
+  INCLUDES = -IE:\SolarNow\SolarGL -IE:\SolarNow\tgaimage -external:IE:\SolarNow\include -external:W0
+  OBJECT_DIR = CMakeFiles\SolarNow.dir
+  OBJECT_FILE_DIR = CMakeFiles\SolarNow.dir\src
+  TARGET_COMPILE_PDB = CMakeFiles\SolarNow.dir\
+  TARGET_PDB = SolarNow.pdb
+  dyndep = CMakeFiles/SolarNow.dir/CXX.dd
+
+build CMakeFiles\SolarNow.dir\icon.rc.res: RC_COMPILER__SolarNow_unscanned_Release E$:\SolarNow\icon.rc || cmake_object_order_depends_target_SolarNow
+  DEP_FILE = CMakeFiles\SolarNow.dir\icon.rc.res.d
+  FLAGS = -DWIN32
+  INCLUDES = -I E:\SolarNow\SolarGL -I E:\SolarNow\tgaimage -I E:\SolarNow\include
+  OBJECT_DIR = CMakeFiles\SolarNow.dir
+  OBJECT_FILE_DIR = CMakeFiles\SolarNow.dir
+  TARGET_COMPILE_PDB = CMakeFiles\SolarNow.dir\
+  TARGET_PDB = SolarNow.pdb
+
+build CMakeFiles\SolarNow.dir\CXX.dd | E$:\SolarNow\cmake-build-release\CMakeFiles\SolarNow.dir\CXXModules.json CMakeFiles\SolarNow.dir\src\main.cpp.obj.modmap: CXX_DYNDEP__SolarNow_Release CMakeFiles\SolarNow.dir\src\main.cpp.obj.ddi | E$:\SolarNow\cmake-build-release\CMakeFiles\SolarNow.dir\CXXDependInfo.json
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target main
+# Link build statements for EXECUTABLE target SolarNow
 
 
 #############################################
-# Link the executable main.exe
+# Link the executable SolarNow.exe
 
-build main.exe: CXX_EXECUTABLE_LINKER__main_Release CMakeFiles\main.dir\src\main.cpp.obj | SolarGL\SolarGL.lib tgaimage\tga.lib || SolarGL\SolarGL.lib tgaimage\tga.lib
+build SolarNow.exe: CXX_EXECUTABLE_LINKER__SolarNow_Release CMakeFiles\SolarNow.dir\src\main.cpp.obj CMakeFiles\SolarNow.dir\icon.rc.res | SolarGL\SolarGL.lib tgaimage\tga.lib || SolarGL\SolarGL.lib tgaimage\tga.lib
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -MD
   LINK_FLAGS = /machine:x64 /INCREMENTAL:NO /subsystem:console
   LINK_LIBRARIES = SolarGL\SolarGL.lib  tgaimage\tga.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
-  OBJECT_DIR = CMakeFiles\main.dir
+  OBJECT_DIR = CMakeFiles\SolarNow.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_COMPILE_PDB = CMakeFiles\main.dir\
-  TARGET_FILE = main.exe
-  TARGET_IMPLIB = main.lib
-  TARGET_PDB = main.pdb
+  TARGET_COMPILE_PDB = CMakeFiles\SolarNow.dir\
+  TARGET_FILE = SolarNow.exe
+  TARGET_IMPLIB = SolarNow.lib
+  TARGET_PDB = SolarNow.pdb
 
 
 #############################################
@@ -114,13 +135,25 @@ build rebuild_cache: phony CMakeFiles\rebuild_cache.util
 
 build cmake_object_order_depends_target_SolarGL: phony || .
 
-build SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj: CXX_COMPILER__SolarGL_unscanned_Release E$:\SolarNow\SolarGL\SolarGL.cpp || cmake_object_order_depends_target_SolarGL
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++17 -MD
+build SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj.ddi: CXX_SCAN__SolarGL_Release E$:\SolarNow\SolarGL\SolarGL.cpp || cmake_object_order_depends_target_SolarGL
+  DEP_FILE = SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj.ddi.d
+  DYNDEP_INTERMEDIATE_FILE = SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj.ddi
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD
+  INCLUDES = -IE:\SolarNow\SolarGL -external:IE:\SolarNow\include -external:W0
+  OBJ_FILE = SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj
+  PREPROCESSED_OUTPUT_FILE = SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj.ddi.i
+
+build SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj: CXX_COMPILER__SolarGL_scanned_Release E$:\SolarNow\SolarGL\SolarGL.cpp | SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj.modmap || cmake_object_order_depends_target_SolarGL SolarGL\CMakeFiles\SolarGL.dir\CXX.dd
+  DYNDEP_MODULE_MAP_FILE = SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj.modmap
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD
   INCLUDES = -IE:\SolarNow\SolarGL -external:IE:\SolarNow\include -external:W0
   OBJECT_DIR = SolarGL\CMakeFiles\SolarGL.dir
   OBJECT_FILE_DIR = SolarGL\CMakeFiles\SolarGL.dir
   TARGET_COMPILE_PDB = SolarGL\CMakeFiles\SolarGL.dir\SolarGL.pdb
   TARGET_PDB = SolarGL\SolarGL.pdb
+  dyndep = SolarGL/CMakeFiles/SolarGL.dir/CXX.dd
+
+build SolarGL\CMakeFiles\SolarGL.dir\CXX.dd | E$:\SolarNow\cmake-build-release\SolarGL\CMakeFiles\SolarGL.dir\CXXModules.json SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj.modmap: CXX_DYNDEP__SolarGL_Release SolarGL\CMakeFiles\SolarGL.dir\SolarGL.cpp.obj.ddi | E$:\SolarNow\cmake-build-release\SolarGL\CMakeFiles\SolarGL.dir\CXXDependInfo.json
 
 
 # =============================================================================
@@ -177,13 +210,25 @@ build SolarGL\rebuild_cache: phony SolarGL\CMakeFiles\rebuild_cache.util
 
 build cmake_object_order_depends_target_tga: phony || .
 
-build tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj: CXX_COMPILER__tga_unscanned_Release E$:\SolarNow\tgaimage\tgaimage.cpp || cmake_object_order_depends_target_tga
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++17 -MD
+build tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj.ddi: CXX_SCAN__tga_Release E$:\SolarNow\tgaimage\tgaimage.cpp || cmake_object_order_depends_target_tga
+  DEP_FILE = tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj.ddi.d
+  DYNDEP_INTERMEDIATE_FILE = tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj.ddi
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD
+  INCLUDES = -IE:\SolarNow\tgaimage -external:IE:\SolarNow\include -external:W0
+  OBJ_FILE = tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj
+  PREPROCESSED_OUTPUT_FILE = tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj.ddi.i
+
+build tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj: CXX_COMPILER__tga_scanned_Release E$:\SolarNow\tgaimage\tgaimage.cpp | tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj.modmap || cmake_object_order_depends_target_tga tgaimage\CMakeFiles\tga.dir\CXX.dd
+  DYNDEP_MODULE_MAP_FILE = tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj.modmap
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD
   INCLUDES = -IE:\SolarNow\tgaimage -external:IE:\SolarNow\include -external:W0
   OBJECT_DIR = tgaimage\CMakeFiles\tga.dir
   OBJECT_FILE_DIR = tgaimage\CMakeFiles\tga.dir
   TARGET_COMPILE_PDB = tgaimage\CMakeFiles\tga.dir\tga.pdb
   TARGET_PDB = tgaimage\tga.pdb
+  dyndep = tgaimage/CMakeFiles/tga.dir/CXX.dd
+
+build tgaimage\CMakeFiles\tga.dir\CXX.dd | E$:\SolarNow\cmake-build-release\tgaimage\CMakeFiles\tga.dir\CXXModules.json tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj.modmap: CXX_DYNDEP__tga_Release tgaimage\CMakeFiles\tga.dir\tgaimage.cpp.obj.ddi | E$:\SolarNow\cmake-build-release\tgaimage\CMakeFiles\tga.dir\CXXDependInfo.json
 
 
 # =============================================================================
@@ -233,7 +278,7 @@ build SolarGL: phony SolarGL\SolarGL.lib
 
 build SolarGL.lib: phony SolarGL\SolarGL.lib
 
-build main: phony main.exe
+build SolarNow: phony SolarNow.exe
 
 build tga: phony tgaimage\tga.lib
 
@@ -247,7 +292,7 @@ build tga.lib: phony tgaimage\tga.lib
 #############################################
 # Folder: E:/SolarNow/cmake-build-release
 
-build all: phony main.exe SolarGL\all tgaimage\all
+build all: phony SolarNow.exe SolarGL\all tgaimage\all
 
 # =============================================================================
 

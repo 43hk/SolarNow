@@ -12,7 +12,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "tgaimage/tga.lib"
+			"path" : "SolarGL/SolarGL.lib"
 		}
 	],
 	"backtrace" : 1,
@@ -26,7 +26,7 @@
 		],
 		"files" : 
 		[
-			"tgaimage/CMakeLists.txt",
+			"SolarGL/CMakeLists.txt",
 			"CMakeLists.txt"
 		],
 		"nodes" : 
@@ -63,14 +63,14 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++17 -MD"
+					"fragment" : "/DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD"
 				}
 			],
 			"includes" : 
 			[
 				{
 					"backtrace" : 2,
-					"path" : "E:/SolarNow/tgaimage"
+					"path" : "E:/SolarNow/SolarGL"
 				},
 				{
 					"backtrace" : 4,
@@ -85,7 +85,7 @@
 				[
 					1
 				],
-				"standard" : "17"
+				"standard" : "20"
 			},
 			"sourceIndexes" : 
 			[
@@ -93,13 +93,13 @@
 			]
 		}
 	],
-	"id" : "tga::@f5c5f250c3b708777aec",
-	"name" : "tga",
-	"nameOnDisk" : "tga.lib",
+	"id" : "SolarGL::@c1f92be29aaabd83290d",
+	"name" : "SolarGL",
+	"nameOnDisk" : "SolarGL.lib",
 	"paths" : 
 	{
-		"build" : "tgaimage",
-		"source" : "tgaimage"
+		"build" : "SolarGL",
+		"source" : "SolarGL"
 	},
 	"sourceGroups" : 
 	[
@@ -116,7 +116,7 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "tgaimage/tgaimage.cpp",
+			"path" : "SolarGL/SolarGL.cpp",
 			"sourceGroupIndex" : 0
 		}
 	],
