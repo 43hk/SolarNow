@@ -1,12 +1,7 @@
-﻿#define STB_IMAGE_IMPLEMENTATION
+﻿#include <cassert>
+#include <filesystem>
 
 #include "SolarGL.h"
-
-#include <cassert>
-#include <fstream>
-#include <sstream>
-#include <filesystem>
-#include <stdexcept>
 
 namespace fs = std::filesystem;
 
@@ -18,7 +13,8 @@ template <> template <> Vec3<float>::Vec3(const Vec3<int>& v) : x(v.x), y(v.y), 
 
 
 
-Matrix::Matrix(Vec3f v) : m(std::vector<std::vector<float> >(4, std::vector<float>(1, 1.f))), rows(4), cols(1) {
+Matrix::Matrix(Vec3f v) : m(std::vector<std::vector<float> >(4, std::vector<float>(1, 1.f))), rows(4), cols(1)
+{
     m[0][0] = v.x;
     m[1][0] = v.y;
     m[2][0] = v.z;
@@ -27,36 +23,40 @@ Matrix::Matrix(Vec3f v) : m(std::vector<std::vector<float> >(4, std::vector<floa
 
 Matrix::Matrix(int r, int c) : m(std::vector<std::vector<float> >(r, std::vector<float>(c, 0.f))), rows(r), cols(c) {}
 
-int Matrix::nrows() {
-    return rows;
-}
+int Matrix::nrows() {return rows;}
 
-int Matrix::ncols() {
-    return cols;
-}
+int Matrix::ncols() {return cols;}
 
-Matrix Matrix::identity(int dimensions) {
+Matrix Matrix::identity(int dimensions)
+{
     Matrix E(dimensions, dimensions);
-    for (int i = 0; i < dimensions; i++) {
-        for (int j = 0; j < dimensions; j++) {
+    for (int i = 0; i < dimensions; i++)
+    {
+        for (int j = 0; j < dimensions; j++)
+        {
             E[i][j] = (i == j ? 1.f : 0.f);
         }
     }
     return E;
 }
 
-std::vector<float>& Matrix::operator[](const int i) {
+std::vector<float>& Matrix::operator[](const int i)
+{
     assert(i >= 0 && i < rows);
     return m[i];
 }
 
-Matrix Matrix::operator*(const Matrix& a) {
+Matrix Matrix::operator*(const Matrix& a)
+{
     assert(cols == a.rows);
     Matrix result(rows, a.cols);
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < a.cols; j++) {
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < a.cols; j++)
+        {
             result.m[i][j] = 0.f;
-            for (int k = 0; k < cols; k++) {
+            for (int k = 0; k < cols; k++)
+            {
                 result.m[i][j] += m[i][k] * a.m[k][j];
             }
         }
@@ -64,58 +64,13 @@ Matrix Matrix::operator*(const Matrix& a) {
     return result;
 }
 
-Matrix Matrix::transpose() {
-    Matrix result(cols, rows);
-    for (int i = 0; i < rows; i++)
-        for (int j = 0; j < cols; j++)
-            result[j][i] = m[i][j];
-    return result;
-}
 
-Matrix Matrix::inverse() {
-    assert(rows == cols);
-    // augmenting the square matrix with the identity matrix of the same dimensions a => [ai]
-    Matrix result(rows, cols * 2);
-    for (int i = 0; i < rows; i++)
-        for (int j = 0; j < cols; j++)
-            result[i][j] = m[i][j];
-    for (int i = 0; i < rows; i++)
-        result[i][i + cols] = 1;
-    // first pass
-    for (int i = 0; i < rows - 1; i++) {
-        // normalize the first row
-        for (int j = result.cols - 1; j >= 0; j--)
-            result[i][j] /= result[i][i];
-        for (int k = i + 1; k < rows; k++) {
-            float coeff = result[k][i];
-            for (int j = 0; j < result.cols; j++) {
-                result[k][j] -= result[i][j] * coeff;
-            }
-        }
-    }
-    // normalize the last row
-    for (int j = result.cols - 1; j >= rows - 1; j--)
-        result[rows - 1][j] /= result[rows - 1][rows - 1];
-    // second pass
-    for (int i = rows - 1; i > 0; i--) {
-        for (int k = i - 1; k >= 0; k--) {
-            float coeff = result[k][i];
-            for (int j = 0; j < result.cols; j++) {
-                result[k][j] -= result[i][j] * coeff;
-            }
-        }
-    }
-    // cut the identity matrix back
-    Matrix truncate(rows, cols);
-    for (int i = 0; i < rows; i++)
-        for (int j = 0; j < cols; j++)
-            truncate[i][j] = result[i][j + cols];
-    return truncate;
-}
-
-std::ostream& operator<<(std::ostream& s, Matrix& m) {
-    for (int i = 0; i < m.nrows(); i++) {
-        for (int j = 0; j < m.ncols(); j++) {
+std::ostream& operator<<(std::ostream& s, Matrix& m)
+{
+    for (int i = 0; i < m.nrows(); i++)
+    {
+        for (int j = 0; j < m.ncols(); j++)
+        {
             s << m[i][j];
             if (j < m.ncols() - 1) s << "\t";
         }
@@ -145,19 +100,22 @@ Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), diffus
             Vec3f v;
             for (int i = 0; i < 3; i++) iss >> v[i];
             verts_.push_back(v);
-        } else if (!line.compare(0, 3, "vn "))
+        }
+        else if (!line.compare(0, 3, "vn "))
         {
             iss >> trash >> trash;
             Vec3f n;
             for (int i = 0; i < 3; i++) iss >> n[i];
             norms_.push_back(n);
-        } else if (!line.compare(0, 3, "vt "))
+        }
+        else if (!line.compare(0, 3, "vt "))
         {
             iss >> trash >> trash;
             Vec2f uv;
             for (int i = 0; i < 2; i++) iss >> uv[i];
             uv_.push_back(uv);
-        } else if (!line.compare(0, 2, "f "))
+        }
+        else if (!line.compare(0, 2, "f "))
         {
             std::vector<Vec3i> f;
             Vec3i tmp;
@@ -170,10 +128,7 @@ Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), diffus
                 {
                     iss >> trash;
                     if (iss.peek() != '/') iss >> tmp[1]; // 纹理索引
-                    if (iss.peek() == '/')
-                    {
-                        iss >> trash >> tmp[2]; // 法线索引
-                    }
+                    if (iss.peek() == '/') iss >> trash >> tmp[2]; // 法线索引
                 }
                 for (int i = 0; i < 3; i++) tmp[i]--; // OBJ 索引从 1 开始，数组是从0开始
                 f.push_back(tmp);
@@ -188,50 +143,40 @@ Model::Model(const char* filename) : verts_(), faces_(), norms_(), uv_(), diffus
 Model::~Model() {}
 
 
-int Model::nfaces()
-{
-    return (int)faces_.size();
-}
+int Model::nfaces() {return (int)faces_.size();}
 
 std::vector<int> Model::face(int idx)
 {
     std::vector<int> face;
-    for (Vec3i v : faces_[idx]) {
+    for (Vec3i v : faces_[idx])
+    {
         face.push_back(v[0]); // 只提取顶点索引
     }
     return face;
 }
 
-Vec3f Model::getVert(int idx)
-{
-    return verts_[idx];
-}
+Vec3f Model::getVert(int idx) {return verts_[idx];}
 
-void Model::load_texture(std::string filename, const char *suffix, TGAImage &img) {
+void Model::load_texture(std::string filename, const char *suffix, TGAImage &img)
+{
     std::string texfile(filename);
     size_t dot = texfile.find_last_of(".");
-    if (dot!=std::string::npos) {
+    if (dot!=std::string::npos)
+    {
         texfile = texfile.substr(0,dot) + std::string(suffix);
         std::cerr << "texture file " << texfile << " loading " << std::endl << (img.read_tga_file(texfile.c_str()) ? "ok" : "failed") << std::endl;
         img.flip_vertically();
     }
 }
 
-TGAColor Model::diffuse(Vec2i uv) {
-    return diffusemap_.get(uv.x , uv.y);
-}
+TGAColor Model::diffuse(Vec2i uv) {return diffusemap_.get(uv.x , uv.y);}
 
-Vec2i Model::getUv(int idx)
+Vec2i Model::getUv(int idx){return Vec2i(uv_[idx].x * diffusemap_.get_width(), uv_[idx].y * diffusemap_.get_height());}
+
+Vec3f Model::getNorm(int idx){return norms_[idx].normalize();}
+
+std::vector<std::vector<Vec3i>> Model::triangulate_face(int idx)
 {
-    return Vec2i(uv_[idx].x * diffusemap_.get_width(), uv_[idx].y * diffusemap_.get_height());
-}
-
-Vec3f Model::getNorm(int idx)
-{
-    return norms_[idx].normalize();
-}
-
-std::vector<std::vector<Vec3i>> Model::triangulate_face(int idx) {
     std::vector<Vec3i> &face = faces_[idx];
     std::vector<std::vector<Vec3i>> triangles;
 

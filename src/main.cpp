@@ -1,9 +1,5 @@
 #include <iostream>
-#include <algorithm>
-#include <chrono>
 #include <vector>
-#include <cmath>
-#include <limits>
 #include <filesystem>
 #include <numbers>
 
@@ -25,7 +21,7 @@ Vec3f camera(0,0,5);
 Vec3f view(0, 0, -1);
 //计算半程向量
 Vec3f half = (light_dir + view).normalize();
-//创建环境光强
+
 float ambient_light = .0;
 
 Model* model = nullptr;
@@ -55,7 +51,7 @@ Matrix rotationY(float angle) {
 
 int main()
 {
-	std::cout << "请设定环境光强度，它会影响背光面亮度（如果类似于宇宙环境，请尽可能降低环境光）：";
+	std::cout << "ambient light:";
 	std::cin >> ambient_light;
 
 	const std::string model_dir = "model";

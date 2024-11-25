@@ -1,11 +1,10 @@
 #pragma once
 
-#include <cmath>
+
 #include <vector>
 #include <sstream>
 #include <iostream>
 
-#include "stb_image/stb_image.h"
 #include "tgaimage.h"
 
 
@@ -14,7 +13,8 @@
 //geometry
 class Matrix;
 
-template <class t> struct Vec2 {
+template <class t> struct Vec2
+{
     t x, y;
     Vec2<t>() : x(t()), y(t()) {}
     Vec2<t>(t _x, t _y) : x(_x), y(_y) {}
@@ -25,7 +25,8 @@ template <class t> struct Vec2 {
     template <class > friend std::ostream& operator<<(std::ostream& s, Vec2<t>& v);
 };
 
-template <class t> struct Vec3 {
+template <class t> struct Vec3
+{
     t x, y, z;
     Vec3<t>() : x(t()), y(t()), z(t()) {}
     Vec3<t>(t _x, t _y, t _z) : x(_x), y(_y), z(_z) {}
@@ -51,18 +52,21 @@ template <> template <> Vec3<int>::Vec3(const Vec3<float>& v);
 template <> template <> Vec3<float>::Vec3(const Vec3<int>& v);
 
 
-template <class t> std::ostream& operator<<(std::ostream& s, Vec2<t>& v) {
+template <class t> std::ostream& operator<<(std::ostream& s, Vec2<t>& v)
+{
     s << "(" << v.x << ", " << v.y << ")\n";
     return s;
 }
 
-template <class t> std::ostream& operator<<(std::ostream& s, Vec3<t>& v) {
+template <class t> std::ostream& operator<<(std::ostream& s, Vec3<t>& v)
+{
     s << "(" << v.x << ", " << v.y << ", " << v.z << ")\n";
     return s;
 }
 
 
-class Matrix {
+class Matrix
+{
     std::vector<std::vector<float> > m;
     int rows, cols;
 public:
@@ -73,16 +77,14 @@ public:
     static Matrix identity(int dimensions);
     std::vector<float>& operator[](const int i);
     Matrix operator*(const Matrix& a);
-    Matrix transpose();
-    Matrix inverse();
     friend std::ostream& operator<<(std::ostream& s, Matrix& m);
 };
 
 
 //-------------------------------------------------------------------------
 //model
-class Model {
-private:
+class Model
+{
     std::vector<Vec3f> verts_;
     std::vector<std::vector<Vec3i>> faces_; // attention, this Vec3i means vertex/uv/normal
     std::vector<Vec3f> norms_;
