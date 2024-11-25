@@ -60,3 +60,9 @@
 2473	2530	7542357354496157	SolarGL/SolarGL.lib	33fb85b44084b5c3
 232	2559	7542357332087319	CMakeFiles/SolarNow.dir/src/main.cpp.obj	fe3f16f8aafe9ac
 2559	2731	7542357355359560	SolarNow.exe	422e979021fc65e5
+19	463	7542384136054033	CMakeFiles/SolarNow.dir/src/main.cpp.obj.ddi	3c3d386665c103c0
+463	513	7542384140501185	CMakeFiles/SolarNow.dir/CXX.dd	2dab65c047048161
+463	513	7542384140501185	E:/SolarNow/cmake-build-release/CMakeFiles/SolarNow.dir/CXXModules.json	2dab65c047048161
+463	513	7542384140501185	CMakeFiles/SolarNow.dir/src/main.cpp.obj.modmap	2dab65c047048161
+519	2844	7542384141056242	CMakeFiles/SolarNow.dir/src/main.cpp.obj	fe3f16f8aafe9ac
+2844	3024	7542384164298073	SolarNow.exe	422e979021fc65e5

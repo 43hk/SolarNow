@@ -104,7 +104,7 @@ int main()
 				// 检查 .tga 文件是否已存在
 				if (!std::filesystem::exists(tgaFile))
 				{
-					std::string convert_command = "ffmpeg -i " + model_dir + "/" + fname + " " + tgaFile;
+					std::string convert_command = R"(ffmpeg\ffmpeg -i )" + model_dir + "/" + fname + " " + tgaFile;
 					std::cout << convert_command << std::endl;
 
 					int convert_result = system(convert_command.c_str());
