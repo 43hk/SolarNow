@@ -39,7 +39,8 @@ Matrix viewPort(int x, int y, int w, int h)
 	return m;
 }
 
-Matrix rotationY(float angle) {
+Matrix rotationY(float angle)
+{
 	Matrix m = Matrix::identity(4);
 	m[0][0] = std::cos(angle);
 	m[0][2] = std::sin(angle);
@@ -86,7 +87,7 @@ int main()
 			return 1;
 		}
 
-	//查找png贴图并转换位tga
+	//查找png贴图并转换为tga
 	std::vector<std::string> imageFiles = getImageFiles(model_dir);
 	if (imageFiles.empty())
 		{
@@ -129,7 +130,6 @@ int main()
 	//初始化资源
 	Zbuffer z_buffer(width, height);
 	model = new Model(obj_file.data());
-	TGAImage image(width, height, TGAImage::RGB);
 
 	//--------------------------------------------------------------------------
 	//设定变换矩阵
@@ -141,17 +141,22 @@ int main()
 	//执行渲染循环写入
 	for (int i = 0;i < 121;++i)//
 	{
-		float angle = i * std::numbers::pi / 60 ;
+		//申请画布
+		TGAImage* image = new TGAImage(width, height, TGAImage::RGB);
+
+		float angle = i * (std::numbers::pi / 60);
 		Matrix Rotation = rotationY(angle);
 
 		render(ViewPort, Projection, Rotation, light_dir, ambient_light, width, height, z_buffer, model, image);
 
-		image.flip_vertically();
+		image->flip_vertically();
 		std::ostringstream stream;
 		stream << std::setw(3) << std::setfill('0') << i;
 		std::string output_file = "output/output" + stream.str() + ".tga";
-		image.write_tga_file(output_file.c_str());
+		image->write_tga_file(output_file.c_str());
 
+		//删除画布
+		delete image;
 		z_buffer.fresh();
 
 		std::cout << ".";

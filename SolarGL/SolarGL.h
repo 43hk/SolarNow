@@ -141,8 +141,8 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
                   float ambient_light,
                   int width,
                   Zbuffer &zbuffer,
-                  Model *model,
-                  TGAImage &image);
+                  Model* model,
+                  TGAImage* image);
 
 void render(Matrix &ViewPort, Matrix &Projection, Matrix &Rotation,
             Vec3f &light_dir,
@@ -150,7 +150,7 @@ void render(Matrix &ViewPort, Matrix &Projection, Matrix &Rotation,
             int width,
             int height,
             Zbuffer &zbuffer,
-            Model *model,
-            TGAImage &image);
+            Model* model,
+            TGAImage* image);
 
 std::vector<std::string> getImageFiles(const std::string& directory);

@@ -200,8 +200,8 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
                   float ambient_light,
                   int width,
                   Zbuffer &zbuffer,
-                  Model *model,
-                  TGAImage &image)
+                  Model* model,
+                  TGAImage* image)
 {
     if (t0.y == t1.y && t0.y == t2.y) return;  // 退化三角形忽略
 
@@ -243,7 +243,7 @@ void triangleDraw(Vec3i &t0, Vec3i &t1, Vec3i &t2,
             {
                 zbuffer.buffer[Z_idx] = P.z;
                 TGAColor color = model->diffuse(uvP);  // 获取纹理颜色
-                image.set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : ambient_light));
+                image->set(P.x, P.y, color * (ityP > 0 ? (ityP + ambient_light) : ambient_light));
             }
         }
 
@@ -258,8 +258,8 @@ void render(Matrix &ViewPort, Matrix &Projection, Matrix &Rotation,
             int width,
             int height,
             Zbuffer &zbuffer,
-            Model *model,
-            TGAImage &image)
+            Model* model,
+            TGAImage* image)
 {
     for (int i = 0; i < model->nfaces(); i++)
     {
